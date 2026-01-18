@@ -14,7 +14,7 @@ function detectLanguageFromURL() {
   }
   
   // Fall back to localStorage
-  return localStorage.getItem('language') || 'ur';
+  return localStorage.getItem('language') || 'ar';
 }
 
 // Load chapters from JSON file based on language
