@@ -2,7 +2,7 @@
 let chaptersData = [];
 let displayedChapters = 6;
 let filteredChapters = [];
-let currentLang = 'ur'; // Default language
+let currentLang = 'ar'; // Default language
 
 // Detect language from URL parameter
 function detectLanguageFromURL() {
