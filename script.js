@@ -1,63 +1,156 @@
 // Chapters Data - loaded from JSON
 let chaptersData = [];
-let displayedChapters = 6; // Initially show 6 chapters
+let displayedChapters = 6;
 let filteredChapters = [];
+let currentLang = 'ur'; // Default language
 
-// Load chapters from JSON file
+// Detect language from URL parameter
+function detectLanguageFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const langParam = params.get('lang');
+  
+  if (langParam && (langParam === 'ar' || langParam === 'ur')) {
+    return langParam;
+  }
+  
+  // Fall back to localStorage
+  return localStorage.getItem('language') || 'ur';
+}
+
+// Load chapters from JSON file based on language
 async function loadChaptersData() {
   try {
-    const response = await fetch("assests/chapters.json");
+    const dataPath = currentLang === 'ur' ? './data/ur/chapters.json' : './data/ar/chapters.json';
+    const response = await fetch(dataPath);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     chaptersData = data.chapters;
     filteredChapters = [...chaptersData];
+    // Clear error message if any
+    const noResults = document.getElementById('noResults');
+    if (noResults) {
+      noResults.style.display = 'none';
+    }
     renderChapters();
   } catch (error) {
-    console.error("Error loading chapters:", error);
+    console.error('Error loading chapters:', error);
+    // Show error message to user
+    const noResults = document.getElementById('noResults');
+    if (noResults) {
+      const errorMsg = currentLang === 'ur' ? 'دریافت میں خرابی - براہ کرم دوبارہ کوشش کریں' : 'خطأ في التحميل - يرجى المحاولة لاحقا';
+      noResults.textContent = errorMsg;
+      noResults.style.display = 'block';
+    }
   }
 }
 
 // Initialize page
 function init() {
   loadTheme();
+  currentLang = detectLanguageFromURL();
+  setLanguage(currentLang);
   setupEventListeners();
   loadChaptersData();
+  
+  // Set initial language in dropdown
+  const currentLangSpan = document.getElementById('currentLang');
+  if (currentLangSpan) {
+    currentLangSpan.textContent = currentLang === 'ur' ? 'اردو' : 'عربي';
+  }
+  
+  // Set active option in dropdown
+  document.querySelectorAll('.lang-option').forEach(option => {
+    if (option.dataset.lang === currentLang) {
+      option.classList.add('active');
+    } else {
+      option.classList.remove('active');
+    }
+  });
+}
+
+// Language switching
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('language', lang);
+  
+  // Update HTML attributes
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'rtl';
+  
+  // Toggle classes on <html> so CSS controls fonts/spacing (better for performance & caching)
+  document.documentElement.classList.toggle('lang-ar', lang === 'ar');
+  document.documentElement.classList.toggle('lang-ur', lang === 'ur');
+  
+  // Update all text elements
+  updateLanguageUI();
+  
+  // Reload chapters
+  displayedChapters = 6;
+  loadChaptersData();
+}
+
+// Update UI text based on selected language
+function updateLanguageUI() {
+  const elements = document.querySelectorAll('[data-ur][data-ar]');
+  elements.forEach(el => {
+    const text = currentLang === 'ur' ? el.getAttribute('data-ur') : el.getAttribute('data-ar');
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = text;
+    } else if (el.tagName === 'BUTTON' && el.hasAttribute('title')) {
+      el.title = text;
+    } else {
+      el.textContent = text;
+    }
+  });
+  
+  // Update placeholders
+  const searchBars = document.querySelectorAll('.search-bar');
+  searchBars.forEach(bar => {
+    const placeholder = currentLang === 'ur' 
+      ? bar.getAttribute('data-placeholder-ur') 
+      : bar.getAttribute('data-placeholder-ar');
+    if (placeholder) bar.placeholder = placeholder;
+  });
 }
 
 // Render chapters
 function renderChapters() {
-  const grid = document.getElementById("chaptersGrid");
-  const noResults = document.getElementById("noResults");
-  const loadMoreBtn = document.getElementById("loadMoreContainer");
+  const grid = document.getElementById('chaptersGrid');
+  const noResults = document.getElementById('noResults');
+  const loadMoreBtn = document.getElementById('loadMoreContainer');
 
-  grid.innerHTML = "";
+  grid.innerHTML = '';
 
   if (filteredChapters.length === 0) {
-    noResults.style.display = "block";
-    loadMoreBtn.style.display = "none";
+    noResults.style.display = 'block';
+    loadMoreBtn.style.display = 'none';
     return;
   }
 
-  noResults.style.display = "none";
+  noResults.style.display = 'none';
 
   const chaptersToShow = filteredChapters.slice(0, displayedChapters);
 
-  chaptersToShow.forEach((chapter) => {
-    const card = document.createElement("div");
-    card.className = "chapter-card";
+  chaptersToShow.forEach(chapter => {
+    const card = document.createElement('div');
+    card.className = 'chapter-card';
+    
+    const readBtnText = currentLang === 'ur' ? 'پڑھیں' : 'اقرأ';
+    
     card.innerHTML = `
-                    <div class="chapter-number">${chapter.number}</div>
-                    <h3 class="chapter-title">${chapter.title} - ${chapter.subtitle}</h3>
-                    <p class="chapter-description">${chapter.description}</p>
-                    <button class="read-button" onclick="goToChapter(${chapter.id})">پڑھیں</button>
-                `;
+      <h3 class="chapter-title">${chapter.title}</h3>
+      <p class="chapter-description">${chapter.description}</p>
+      <button class="read-button" onclick="goToChapter(${chapter.id})">${readBtnText}</button>
+    `;
     grid.appendChild(card);
   });
 
-  // Show/hide load more button
   if (filteredChapters.length > displayedChapters) {
-    loadMoreBtn.style.display = "block";
+    loadMoreBtn.style.display = 'block';
   } else {
-    loadMoreBtn.style.display = "none";
+    loadMoreBtn.style.display = 'none';
   }
 }
 
@@ -71,15 +164,13 @@ function loadMoreChapters() {
 function handleSearch(query) {
   query = query.toLowerCase().trim();
 
-  if (query === "") {
+  if (query === '') {
     filteredChapters = [...chaptersData];
   } else {
-    filteredChapters = chaptersData.filter((chapter) => {
+    filteredChapters = chaptersData.filter(chapter => {
       return (
         chapter.title.toLowerCase().includes(query) ||
-        chapter.subtitle.toLowerCase().includes(query) ||
-        chapter.description.toLowerCase().includes(query) ||
-        chapter.number.toLowerCase().includes(query)
+        chapter.description.toLowerCase().includes(query)
       );
     });
   }
@@ -90,57 +181,94 @@ function handleSearch(query) {
 
 // Theme toggle
 function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute("data-theme");
-  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-  document.documentElement.setAttribute("data-theme", newTheme);
-  localStorage.setItem("theme", newTheme);
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
 
-  // Update button icon
-  const themeToggle = document.getElementById("themeToggle");
-  themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
 }
 
 function loadTheme() {
-  const savedTheme = localStorage.getItem("theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedTheme);
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
 
-  const themeToggle = document.getElementById("themeToggle");
-  themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 }
 
 // Setup event listeners
 function setupEventListeners() {
-  const searchBar = document.getElementById("searchBar");
-  const desktopSearchBar = document.getElementById("desktopSearchBar");
-  const searchIconBtn = document.getElementById("searchIconBtn");
-  const searchDropdown = document.getElementById("searchDropdown");
-  const themeToggle = document.getElementById("themeToggle");
+  const searchBar = document.getElementById('searchBar');
+  const desktopSearchBar = document.getElementById('desktopSearchBar');
+  const searchIconBtn = document.getElementById('searchIconBtn');
+  const searchDropdown = document.getElementById('searchDropdown');
+  const themeToggle = document.getElementById('themeToggle');
+  const languageToggle = document.getElementById('languageToggle');
+  const languageMenu = document.getElementById('languageMenu');
 
-  // guard missing elements
+  // Language dropdown functionality
+  if (languageToggle && languageMenu) {
+    languageToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = languageMenu.classList.toggle('show');
+      languageToggle.classList.toggle('active');
+      // Update ARIA attribute
+      languageToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.language-dropdown')) {
+        languageMenu.classList.remove('show');
+        languageToggle.classList.remove('active');
+        // Update ARIA attribute
+        languageToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Language option selection
+    document.querySelectorAll('.lang-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const lang = option.dataset.lang;
+        setLanguage(lang);
+        
+        // Update UI and ARIA
+        document.querySelectorAll('.lang-option').forEach(o => {
+          o.classList.remove('active');
+          o.setAttribute('aria-checked', 'false');
+        });
+        option.classList.add('active');
+        option.setAttribute('aria-checked', 'true');
+        
+        // Update current language display
+        const currentLangSpan = document.getElementById('currentLang');
+        currentLangSpan.textContent = lang === 'ur' ? 'اردو' : 'عربي';
+        
+        // Close dropdown
+        languageMenu.classList.remove('show');
+        languageToggle.classList.remove('active');
+        // Update ARIA attribute
+        languageToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
   if (searchIconBtn && searchDropdown && searchBar) {
-    // Search icon click to toggle search dropdown on mobile
-    // helper to position inline overlay search under the icon
     function positionInlineSearch() {
       if (!desktopSearchBar || !searchIconBtn) return;
-      // ensure it's visible to measure
-      desktopSearchBar.style.left = "";
-      desktopSearchBar.style.right = "";
+      desktopSearchBar.style.left = '';
+      desktopSearchBar.style.right = '';
 
-      const nav = document.querySelector("nav");
-      const navRect = nav
-        ? nav.getBoundingClientRect()
-        : { left: 0, width: window.innerWidth };
+      const nav = document.querySelector('nav');
+      const navRect = nav ? nav.getBoundingClientRect() : { left: 0, width: window.innerWidth };
       const iconRect = searchIconBtn.getBoundingClientRect();
 
-      // overlay width (may be set by CSS); if zero, assume 180
       let overlayWidth = desktopSearchBar.offsetWidth || 180;
+      let left = iconRect.left + iconRect.width / 2 - overlayWidth / 2 - navRect.left;
 
-      // compute left relative to nav
-      let left =
-        iconRect.left + iconRect.width / 2 - overlayWidth / 2 - navRect.left;
-
-      // clamp within nav bounds
       const minLeft = 8;
       const maxLeft = Math.max(8, navRect.width - overlayWidth - 8);
       if (left < minLeft) left = minLeft;
@@ -149,16 +277,14 @@ function setupEventListeners() {
       desktopSearchBar.style.left = `${left}px`;
     }
 
-    searchIconBtn.addEventListener("click", (e) => {
+    searchIconBtn.addEventListener('click', e => {
       e.stopPropagation();
-      // On small screens show an inline overlay search (desktopSearchBar)
       if (window.innerWidth <= 768 && desktopSearchBar) {
-        if (desktopSearchBar.classList.contains("show-inline")) {
-          desktopSearchBar.classList.remove("show-inline");
-          desktopSearchBar.style.left = "";
+        if (desktopSearchBar.classList.contains('show-inline')) {
+          desktopSearchBar.classList.remove('show-inline');
+          desktopSearchBar.style.left = '';
         } else {
-          desktopSearchBar.classList.add("show-inline");
-          // position after it becomes visible
+          desktopSearchBar.classList.add('show-inline');
           requestAnimationFrame(() => {
             positionInlineSearch();
             desktopSearchBar.focus();
@@ -167,43 +293,36 @@ function setupEventListeners() {
         return;
       }
 
-      // fallback: toggle mobile dropdown if present
       if (searchDropdown) {
-        if (searchDropdown.style.display === "block") {
-          searchDropdown.style.display = "none";
+        if (searchDropdown.style.display === 'block') {
+          searchDropdown.style.display = 'none';
         } else {
-          searchDropdown.style.display = "block";
+          searchDropdown.style.display = 'block';
           searchBar.focus();
         }
       }
     });
 
-    // Reposition or hide the inline search on resize
-    window.addEventListener("resize", () => {
-      if (
-        desktopSearchBar &&
-        desktopSearchBar.classList.contains("show-inline")
-      ) {
-        // if moved to desktop width, hide
+    window.addEventListener('resize', () => {
+      if (desktopSearchBar && desktopSearchBar.classList.contains('show-inline')) {
         if (window.innerWidth > 768) {
-          desktopSearchBar.classList.remove("show-inline");
-          desktopSearchBar.style.left = "";
+          desktopSearchBar.classList.remove('show-inline');
+          desktopSearchBar.style.left = '';
         } else {
           positionInlineSearch();
         }
       }
     });
 
-    // Search with debounce (mobile dropdown)
     let searchTimeout;
-    searchBar.addEventListener("input", (e) => {
+    searchBar.addEventListener('input', e => {
       clearTimeout(searchTimeout);
       const query = e.target.value.trim();
 
       if (query.length > 0) {
-        searchDropdown.style.display = "block";
+        searchDropdown.style.display = 'block';
       } else {
-        searchDropdown.style.display = "none";
+        searchDropdown.style.display = 'none';
       }
 
       searchTimeout = setTimeout(() => {
@@ -211,10 +330,9 @@ function setupEventListeners() {
       }, 300);
     });
 
-    // Desktop inline search (if present)
     if (desktopSearchBar) {
       let desktopTimeout;
-      desktopSearchBar.addEventListener("input", (e) => {
+      desktopSearchBar.addEventListener('input', e => {
         clearTimeout(desktopTimeout);
         desktopTimeout = setTimeout(() => {
           handleSearch(e.target.value);
@@ -222,64 +340,54 @@ function setupEventListeners() {
       });
     }
 
-    // Hide search dropdown when clicking outside on mobile
-    document.addEventListener("click", (e) => {
-      if (
-        !e.target.closest(".search-container") &&
-        !e.target.closest(".search-dropdown")
-      ) {
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.search-container') && !e.target.closest('.search-dropdown')) {
         if (window.innerWidth <= 768) {
-          searchDropdown.style.display = "none";
+          searchDropdown.style.display = 'none';
         }
       }
     });
   }
 
-  // Theme toggle
-  if (themeToggle) themeToggle.addEventListener("click", toggleTheme);
-
-  // Floating back-to-top button
-  window.addEventListener("scroll", toggleFloatingButton);
+  if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+  window.addEventListener('scroll', toggleFloatingButton);
 }
 
 // Toggle floating back-to-top button visibility
 function toggleFloatingButton() {
-  const button = document.getElementById("floatingBackToTop");
+  const button = document.getElementById('floatingBackToTop');
   if (window.scrollY > 300) {
-    button.classList.add("show");
+    button.classList.add('show');
   } else {
-    button.classList.remove("show");
+    button.classList.remove('show');
   }
 }
 
 // Navigation functions
 function scrollToChapters() {
-  document.getElementById("chapters").scrollIntoView({ behavior: "smooth" });
+  document.getElementById('chapters').scrollIntoView({ behavior: 'smooth' });
 }
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function goToChapter(id) {
-  // Redirect to chapter page
-  window.location.href = `post-${id}.html`;
+  window.location.href = `post-${id}.html?lang=${currentLang}`;
 }
 
 // Form submission
 function handleSubmit(event) {
   event.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const message = document.getElementById("message").value;
-
-  // Here you would typically send this data to a server
-  alert(`شکریہ ${name}! آپ کا پیغام موصول ہو گیا ہے۔`);
-
-  // Reset form
+  const name = document.getElementById('name').value;
+  const successMsg = currentLang === 'ur' 
+    ? `شکریہ ${name}! آپ کا پیغام موصول ہو گیا ہے۔`
+    : `شكراً ${name}! تم استلام رسالتك.`;
+  
+  alert(successMsg);
   event.target.reset();
 }
 
 // Initialize when page loads
-window.addEventListener("DOMContentLoaded", init);
+window.addEventListener('DOMContentLoaded', init);

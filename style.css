@@ -1,3 +1,6 @@
+/* Fonts are preloaded in HTML for better performance (Cloudflare Pages recommended). */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
 * {
     margin: 0;
     padding: 0;
@@ -12,6 +15,8 @@
     --card-bg: #f9fafb;
     --header-bg: #ffffff;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --font-arabic: "Amiri", "Noto Naskh Arabic", serif;
+    --font-urdu: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
 }
 
 [data-theme="dark"] {
@@ -25,11 +30,22 @@
 }
 
 body {
-    font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    font-family: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    line-height: 1.6;
+    line-height: 1.8;
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Use class toggles for language-specific font rules (JS will add html.lang-ar or html.lang-ur) */
+html.lang-ar body {
+    font-family: "Amiri", "Noto Naskh Arabic", serif;
+    line-height: 1.65;
+}
+
+html.lang-ur body {
+    font-family: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
+    line-height: 1.8;
 }
 
 /* Header Styles */
@@ -58,7 +74,7 @@ nav {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--primary-color);
-    font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    font-family: "Amiri", serif !important;
     white-space: nowrap;
 }
 
@@ -91,10 +107,6 @@ nav {
     display: inline-block;
 }
 
-.nav-label {
-    vertical-align: middle;
-}
-
 .nav-links a:hover {
     color: var(--primary-color);
 }
@@ -103,6 +115,100 @@ nav {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+/* Language Dropdown */
+.language-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.language-toggle {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    font-family: "Amiri", serif !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.language-toggle:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.language-toggle i {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.language-toggle.active i {
+    transform: rotate(180deg);
+}
+
+.language-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    min-width: 150px;
+    display: none;
+    z-index: 1500;
+}
+
+.language-menu.show {
+    display: block;
+}
+
+.lang-option {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    font-family: "Amiri", serif !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.lang-option:hover {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.lang-option i {
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.lang-option.active i {
+    opacity: 1;
+    color: var(--primary-color);
+}
+
+.lang-option:not(:last-child) {
+    border-bottom: 1px solid var(--secondary-color);
 }
 
 .search-icon {
@@ -171,18 +277,6 @@ nav {
     width: 300px;
 }
 
-.search-bar.active {
-    width: 250px;
-    padding: 0.5rem 1rem;
-    border: 2px solid var(--secondary-color);
-    border-radius: 25px;
-}
-
-.search-bar.active:focus {
-    width: 300px;
-    border-color: var(--primary-color);
-}
-
 .theme-toggle {
     background: none;
     border: none;
@@ -208,7 +302,11 @@ nav {
 .intro-text p {
     font-size: 1rem;
     margin-bottom: 1rem;
-    line-height: 1.6;
+    line-height: 1.8;
+}
+
+body[lang="ur"] .intro-text p {
+    line-height: 2.1;
 }
 
 .cta-button {
@@ -240,7 +338,7 @@ nav {
 .section-title {
     font-size: 2rem;
     font-weight: 700;
-    font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    font-family: "Amiri", serif !important;
     margin-bottom: 2rem;
     text-align: center;
 }
@@ -276,7 +374,7 @@ nav {
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    font-family: "Amiri", serif !important;
 }
 
 .chapter-description {
@@ -284,6 +382,11 @@ nav {
     opacity: 0.8;
     margin-bottom: 1rem;
     font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+body[lang="ur"] .chapter-description {
+    line-height: 2.1;
 }
 
 .read-button {
@@ -307,12 +410,6 @@ nav {
     font-size: 1.2rem;
     color: var(--text-color);
     opacity: 0.7;
-}
-
-.loading {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.1rem;
 }
 
 .load-more {
@@ -348,14 +445,18 @@ nav {
 
 .about h2 {
     font-size: 2rem;
-    font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    font-family: "Amiri", serif !important;
     margin-bottom: 1rem;
     color: var(--primary-color);
 }
 
 .about p {
     margin-bottom: 1rem;
-    line-height: 1.8;
+    line-height: 1.8; 
+}
+
+body[lang="ur"] .about p {
+    line-height: 2.15; 
 }
 
 /* Contact Section */
@@ -367,7 +468,7 @@ nav {
 
 .contact h2 {
     font-size: 2rem;
-    font-family: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+    font-family: "Amiri", serif !important;
     margin-bottom: 1.5rem;
     text-align: center;
     color: var(--primary-color);
@@ -428,24 +529,6 @@ nav {
     background-color: #1d4ed8;
 }
 
-/* Search Results Dropdown */
-.search-results-dropdown {
-    position: fixed;
-    top: 60px;
-    right: 0;
-    left: 0;
-    background-color: var(--bg-color);
-    border-top: 1px solid var(--secondary-color);
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 998;
-    padding: 1rem;
-}
-
-.search-results-dropdown.show {
-    display: block !important;
-}
-
 /* Bottom Navigation */
 .bottom-nav {
     position: fixed;
@@ -497,22 +580,6 @@ footer {
     margin-top: 4rem;
     margin-bottom: 70px;
     box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.back-to-top {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-}
-
-.back-to-top:hover {
-    background-color: #1d4ed8;
-    transform: translateY(-2px);
 }
 
 /* Floating Back to Top Button */
@@ -575,6 +642,18 @@ footer {
     .search-container {
         display: flex;
         gap: 0.5rem;
+    }
+
+    .language-switch {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--header-bg);
+        padding: 0.5rem;
+        border-radius: 25px;
+        box-shadow: var(--shadow);
+        z-index: 999;
     }
 
     .search-icon {
@@ -659,6 +738,11 @@ footer {
     .cta-button {
         padding: 0.75rem 1.5rem;
         font-size: 0.95rem;
+    }
+
+    .about {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
     }
 
     .chapters-grid {

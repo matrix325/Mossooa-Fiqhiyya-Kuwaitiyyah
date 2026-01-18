@@ -4,134 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الموسوعة الفقهية الكويتية</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Nastaliq+Urdu&family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+        <meta name="description" content="الموسوعة الفقهية الكويتية — موسوعة فقهية شاملة متاحة بالعربية والأردية. مصادر ومراجع فقهية مرتبة للباحثين والطلاب.">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="https://your-domain.com/">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "الموسوعة الفقهية الكويتية",
+            "url": "https://your-domain.com/"
+        }
+        </script>
 </head>
 <body>
     <!-- Header -->
     <header>
         <nav>
-            <div class="logo">الموسوعة الفقهية الكويتية</div>
+            <h1 class="logo" id="siteLogo">الموسوعة الفقهية الكويتية</h1>
             <div class="nav-links">
-                <a href="#home"><i class="fa fa-home"></i> <span class="nav-label"></span></a>
-                <a href="#chapters"><i class="fa fa-book"></i> <span class="nav-label"></span></a>
-                <a href="#about"><i class="fa fa-info-circle"></i> <span class="nav-label"></span></a>
-                <a href="#contact"><i class="fa fa-envelope"></i> <span class="nav-label"></span></a>
+                <a href="#home" aria-label="Home"><i class="fa fa-home"></i></a>
+                <a href="#chapters" aria-label="Chapters"><i class="fa fa-book"></i></a>
+                <a href="#about" aria-label="About"><i class="fa fa-info-circle"></i></a>
+                <a href="#contact" aria-label="Contact"><i class="fa fa-envelope"></i></a>
             </div>
             <div class="search-container">
                 <button class="search-icon" id="searchIconBtn" title="Search"><i class="fa fa-search"></i></button>
-                <input type="text" class="search-bar desktop-search" id="desktopSearchBar" placeholder="جستجو کریں">
+                <input type="text" class="search-bar desktop-search" id="desktopSearchBar" data-placeholder-ur="جستجو کریں" data-placeholder-ar="البحث">
                 <button class="theme-toggle" id="themeToggle" title="change-theme">🌙</button>
+                <div class="language-dropdown">
+                    <button class="language-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Select language">
+                        <span id="currentLang">اردو</span>
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+                    <div class="language-menu" id="languageMenu" role="menu">
+                        <button class="lang-option active" data-lang="ur" role="menuitemradio" aria-checked="true">
+                            <span>اردو</span>
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <button class="lang-option" data-lang="ar" role="menuitemradio" aria-checked="false">
+                            <span>عربي</span>
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
 
     <!-- Search Bar Dropdown (Mobile) -->
     <div class="search-dropdown" id="searchDropdown" style="display: none;">
-        <input type="text" class="search-bar" id="searchBar" placeholder="جستجو کریں">
+        <input type="text" class="search-bar" id="searchBar" data-placeholder-ur="جستجو کریں" data-placeholder-ar="البحث">
         <div class="search-results" id="searchResults"></div>
     </div>
 
     <!-- Intro Section -->
     <section id="home" class="intro-text">
-        <p>صادر عن: وزارة الأوقاف والشئون الإسلامية - الكويت</p>
-        <p>الطبعة: (من 1404 - 1427 هـ)</p>
-        <p>صفحة المؤلف: [مجموعة من المؤلفين]</p>
-        <button class="cta-button" onclick="scrollToChapters()">ابدأ القراءة</button>
+        <p data-ur="صادر کنندہ: وزارت اوقاف و امور اسلامیہ - کویت" data-ar="صادر عن: وزارة الأوقاف والشئون الإسلامية - الكويت"></p>
+        <p data-ur="اشاعت: (1404 - 1427 ھ)" data-ar="الطبعة: (من 1404 - 1427 هـ)"></p>
+        <p data-ur="مصنفین: [متعدد مصنفین]" data-ar="صفحة المؤلف: [مجموعة من المؤلفين]"></p>
+        <button class="cta-button" onclick="scrollToChapters()" data-ur="پڑھنا شروع کریں" data-ar="ابدأ القراءة"></button>
     </section>
 
     <!-- Chapters Section -->
     <section id="chapters" class="chapters">
-        <h2 class="section-title">ابواب کی فہرست</h2>
+        <h2 class="section-title" data-ur="ابواب کی فہرست" data-ar="قائمة الأبواب"></h2>
         <div id="chaptersGrid" class="chapters-grid"></div>
-        <div id="noResults" class="no-results" style="display: none;">
-            کوئی نتیجہ نہیں ملا
-        </div>
+        <div id="noResults" class="no-results" style="display: none;" data-ur="کوئی نتیجہ نہیں ملا" data-ar="لا توجد نتائج"></div>
         <div class="load-more" id="loadMoreContainer" style="display: none;">
-            <button class="load-more-button" onclick="loadMoreChapters()">مزید لوڈ کریں</button>
+            <button class="load-more-button" onclick="loadMoreChapters()" data-ur="مزید لوڈ کریں" data-ar="تحميل المزيد"></button>
         </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="about">
-        <h2>حول الكتاب</h2>
-        <p>
-            الموسوعة الفقهية الكويتية هي من أضخم الموسوعات الفقهية المعاصرة، تضم خمسة وأربعين مجلداً ضخماً من الأبحاث
-            والمصطلحات الفقهية، صدرت بإشراف وزارة الأوقاف والشؤون الإسلامية في دولة الكويت على مراحل بين سنتي 1404 هـ –
-            1427 هـ، في مجهود جمع بين العلم الشرعي الدقيق والمنهج العلمي المنظم.
-        </p>
-        <p>
-            لا تُعد هذه الموسوعة مجرد تجميع نصوص، بل هي مرجع فقه إسلامي شامل يعرض آراء الفقهاء الأربعة (الحنفية،
-            المالكية، الشافعية، والحنبلية) بطريقة مرتبة وفق الترتيب الأبجدي والموضوعي للمصطلحات الفقهية، مما يجعلها أداة
-            قوية للبحث والدراسة والفهم العميق لأحكام الشريعة الإسلامية.
-        </p>
-        <p>
-            يُثمن كثير من العلماء والمشتغلين بالفقه هذه الموسوعة باعتبارها مرجعاً موسوعياً أساسياً في الفقه المقارن،
-            يجمع بين آراء المذاهب الكبرى ويعرض دلالاتها ومصادرها، كما أنها أداة تعليمية وأكاديمية موثوقة تُستخدم في
-            مناهج التعليم الشرعي في كثير من الجامعات والمعاهد الإسلامية، ومصدراً معتمداً للفتاوى والأحكام.
-        </p>
-        <p>
-            وقد امتد تأثيرها ليشمل الفقه التقليدي، حيث تُجمع فيها قواعد الاستدلال والمصطلحات كما وردت في التراث، مع
-            عناية بعزو الأدلة، كما تُيسر المقارنة بين آراء الفقهاء وتبيان نقاط الاتفاق والاختلاف، إضافة إلى استعمالها
-            العملي في الفتاوى المعاصرة لما تتضمنه من معلومات موثقة ومرتبة.
-        </p>
-        <p>
-            تمثل هذه الموسوعة إنجازاً علمياً ومعرفياً كبيراً في المكتبة الإسلامية الحديثة، يجمع بين السعة العلمية،
-            الترتيب المنهجي، والدقة في النقل، مما يجعلها مرجعاً لا غنى عنه للباحث والطالب والمفتي على حدٍ سواء.
-        </p>
+        <h2 data-ur="کتاب کا تعارف" data-ar="حول الكتاب"></h2>
+        <div class="about-content">
+            <p data-ur="موسوعہ فقہیہ کویتیہ معاصر دور کی سب سے بڑی فقہی انسائیکلوپیڈیا ہے، جو پینتالیس ضخیم جلدوں پر مشتمل ہے۔ یہ وزارت اوقاف و امور اسلامیہ، کویت کی نگرانی میں 1404ھ سے 1427ھ تک شائع ہوئی۔"
+                data-ar="الموسوعة الفقهية الكويتية هي من أضخم الموسوعات الفقهية المعاصرة، تضم خمسة وأربعين مجلداً ضخماً من الأبحاث والمصطلحات الفقهية، صدرت بإشراف وزارة الأوقاف والشؤون الإسلامية في دولة الكويت على مراحل بين سنتي 1404 هـ – 1427 هـ، في مجهود جمع بين العلم الشرعي الدقيق والمنهج العلمي المنظم."></p>
+            
+            <p data-ur="یہ موسوعہ محض متون کا مجموعہ نہیں، بلکہ ایک جامع فقہی حوالہ ہے جو چاروں مکاتب فکر (حنفی، مالکی، شافعی، حنبلی) کی آراء کو منظم انداز میں پیش کرتا ہے۔"
+                data-ar="لا تُعد هذه الموسوعة مجرد تجميع نصوص، بل هي مرجع فقه إسلامي شامل يعرض آراء الفقهاء الأربعة (الحنفية، المالكية، الشافعية، والحنبلية) بطريقة مرتبة وفق الترتيب الأبجدي والموضوعي للمصطلحات الفقهية، مما يجعلها أداة قوية للبحث والدراسة والفهم العميق لأحكام الشريعة الإسلامية."></p>
+            
+            <p data-ur="بہت سے علماء اور فقہی محققین اسے فقہ مقارن کا بنیادی حوالہ قرار دیتے ہیں، جو مختلف مذاہب کی آراء اور ان کے دلائل کو جمع کرتا ہے۔"
+                data-ar="يُثمن كثير من العلماء والمشتغلين بالفقه هذه الموسوعة باعتبارها مرجعاً موسوعياً أساسياً في الفقه المقارن، يجمع بين آراء المذاهب الكبرى ويعرض دلالاتها ومصادرها، كما أنها أداة تعليمية وأكاديمية موثوقة تُستخدم في مناهج التعليم الشرعي في كثير من الجامعات والمعاهد الإسلامية، ومصدراً معتمداً للفتاوى والأحكام."></p>
+            
+            <p data-ur="یہ موسوعہ اسلامی کتب خانے میں ایک عظیم علمی کامیابی ہے، جو وسعت علمی، منظم ترتیب اور نقل میں درستگی کو یکجا کرتا ہے۔"
+                data-ar="تمثل هذه الموسوعة إنجازاً علمياً ومعرفياً كبيراً في المكتبة الإسلامية الحديثة، يجمع بين السعة العلمية، الترتيب المنهجي، والدقة في النقل، مما يجعلها مرجعاً لا غنى عنه للباحث والطالب والمفتي على حدٍ سواء."></p>
+        </div>
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="contact">
-        <h2>رابطہ کریں</h2>
+        <h2 data-ur="رابطہ کریں" data-ar="اتصل بنا"></h2>
         <form class="contact-form" onsubmit="handleSubmit(event)">
             <div class="form-group">
-                <label for="name">نام</label>
+                <label for="name">
+                    <span data-ur="نام" data-ar="الاسم">نام</span>
+                </label>
                 <input type="text" id="name" required>
             </div>
             <div class="form-group">
-                <label for="email">ای میل</label>
+                <label for="email">
+                    <span data-ur="ای میل" data-ar="البريد الإلكتروني">ای میل</span>
+                </label>
                 <input type="email" id="email" required>
             </div>
             <div class="form-group">
-                <label for="message">پیغام</label>
+                <label for="message">
+                    <span data-ur="پیغام" data-ar="الرسالة">پیغام</span>
+                </label>
                 <textarea id="message" required></textarea>
             </div>
-            <button type="submit" class="submit-button">جمع کروائیں</button>
+            <button type="submit" class="submit-button" data-ur="جمع کروائیں" data-ar="إرسال"></button>
         </form>
     </section>
 
     <!-- Floating Back to Top Button -->
-    <button class="floating-back-to-top" id="floatingBackToTop" onclick="scrollToTop()" title="اوپر جائیں">↑</button>
+    <button class="floating-back-to-top" id="floatingBackToTop" onclick="scrollToTop()" data-title-ur="اوپر جائیں" data-title-ar="العودة للأعلى">↑</button>
 
     <!-- Bottom Navigation (Mobile) -->
     <nav class="bottom-nav">
-        <a href="#home" class="bottom-nav-item" title="Home">
-            <i class="fa fa-home"></i>
-            <span class="label">Home</span>
+        <a href="#home" class="bottom-nav-item">
+            <i class="fa fa-home"></i> 
         </a>
-        <a href="#chapters" class="bottom-nav-item" title="Chapters">
-            <i class="fa fa-book"></i>
-            <span class="label">Chapters</span>
+        <a href="#chapters" class="bottom-nav-item">
+            <i class="fa fa-book"></i> 
         </a>
-        <a href="#about" class="bottom-nav-item" title="About">
+        <a href="#about" class="bottom-nav-item">
             <i class="fa fa-info-circle"></i>
-            <span class="label">About</span>
         </a>
-        <a href="#contact" class="bottom-nav-item" title="Contact">
-            <i class="fa fa-envelope"></i>
-            <span class="label">Contact</span>
+        <a href="#contact" class="bottom-nav-item">
+            <i class="fa fa-envelope"></i> 
         </a>
     </nav>
 
-    <!-- Footer -->
-    <footer>
-        <p>الموسوعة الفقهية الكويتية</p>
-    </footer>
     <script src="script.js"></script>
 </body>
 </html>
